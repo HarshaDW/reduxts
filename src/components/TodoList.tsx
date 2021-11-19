@@ -1,23 +1,33 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { Todo, fetchTodoList } from '../redux/todoList/actions'
+import { fetchTodoList, deleteTodo } from '../redux/todoList/actions'
 import { StoreState } from '../store'
+import { useDispatch, useSelector } from 'react-redux'
 
-interface Props {
-  todos?: Todo[]
-  fetchTodos?: () => void
-}
+const TodoList = () => {
+  const state = useSelector((state: StoreState) => state.todos)
+  const dispatch = useDispatch()
 
-const TodoList = (props: Props) => {
-    console.log('props', props);
-  return <div></div>
-}
-
-const mapStateToProps = ({ todos }: StoreState) => {
-  return {
-    todos,
+  const handleOnClick = () => {
+    dispatch(fetchTodoList())
   }
+
+  const handleDelete = (toDoID: number) => {
+      dispatch(deleteTodo(toDoID))
+  }
+
+  return (
+    <div>
+      <button onClick={handleOnClick}>Fetch Todos</button>
+      {state &&
+        state.map((todo) => {
+          return (
+            <div>
+              <p key={todo.id}>{todo.title}</p>
+              <button onClick={() => handleDelete(todo.id)}>Delete</button>
+            </div>
+          )
+        })}
+    </div>
+  )
 }
 
-
-export default connect(mapStateToProps, {fetchTodoList})(TodoList)
+export default TodoList
